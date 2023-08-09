@@ -12,24 +12,34 @@ df = pd.DataFrame(
     columns=sample_data.feature_names)
 df['Y'] = sample_data.target
 
-X = df.drop('Y', axis=1).values
-y = df['Y'].values
+# Split the dataframe into test and train data
+def split_data(df):
+    X = df.drop('Y', axis=1).values
+    y = df['Y'].values
 
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=0)
-data = {"train": {"X": X_train, "y": y_train},
-        "test": {"X": X_test, "y": y_test}}
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=0)
+    data = {"train": {"X": X_train, "y": y_train},
+            "test": {"X": X_test, "y": y_test}}
+    return data
 
 args = {
     "alpha": 0.5
 }
 
-reg_model = Ridge(**args)
-reg_model.fit(data["train"]["X"], data["train"]["y"])
-
-preds = reg_model.predict(data["test"]["X"])
-mse = mean_squared_error(preds, y_test)
-metrics = {"mse": mse}
+# Train the model, return the model
+def train_model(data, args):
+    reg_model = Ridge(**args)
+    reg_model.fit(data["train"]["X"], data["train"]["y"])
+    return reg_model
+    
+# Evaluate the metrics for the model
+def get_model_metrics(reg_model, data):
+    preds = reg_model.predict(data["test"]["X"])
+    mse = mean_squared_error(preds, data["test"]["y"])
+    metrics = {"mse": mse}
+    return metrics
+    
 print(metrics)
 
 model_name = "sklearn_regression_model.pkl"
