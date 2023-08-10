@@ -55,5 +55,4 @@ def main():
 
     joblib.dump(value=reg, filename=model_name)
 
-print(metrics)
 
