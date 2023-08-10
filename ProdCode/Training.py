@@ -5,13 +5,6 @@ from sklearn.model_selection import train_test_split
 import joblib
 import pandas as pd
 
-sample_data = load_diabetes()
-
-df = pd.DataFrame(
-    data=sample_data.data,
-    columns=sample_data.feature_names)
-df['Y'] = sample_data.target
-
 # Split the dataframe into test and train data
 def split_data(df):
     X = df.drop('Y', axis=1).values
@@ -22,10 +15,6 @@ def split_data(df):
     data = {"train": {"X": X_train, "y": y_train},
             "test": {"X": X_test, "y": y_test}}
     return data
-
-args = {
-    "alpha": 0.5
-}
 
 # Train the model, return the model
 def train_model(data, args):
@@ -39,8 +28,32 @@ def get_model_metrics(reg_model, data):
     mse = mean_squared_error(preds, data["test"]["y"])
     metrics = {"mse": mse}
     return metrics
-    
+
+def main():
+    # Load Data
+    sample_data = load_diabetes()
+
+    df = pd.DataFrame(
+        data=sample_data.data,
+        columns=sample_data.feature_names)
+    df['Y'] = sample_data.target
+
+    # Split Data into Training and Validation Sets
+    data = split_data(df)
+
+    # Train Model on Training Set
+    args = {
+        "alpha": 0.5
+    }
+    reg = train_model(data, args)
+
+    # Validate Model on Validation Set
+    metrics = get_model_metrics(reg, data)
+
+    # Save Model
+    model_name = "sklearn_regression_model.pkl"
+
+    joblib.dump(value=reg, filename=model_name)
+
 print(metrics)
 
-model_name = "sklearn_regression_model.pkl"
-joblib.dump(value=reg, filename=model_name)
