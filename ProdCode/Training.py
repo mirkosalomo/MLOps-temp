@@ -2,8 +2,9 @@ from sklearn.datasets import load_diabetes
 from sklearn.linear_model import Ridge
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
-import joblib
 import pandas as pd
+import joblib
+
 
 # Split the dataframe into test and train data
 def split_data(df):
@@ -16,18 +17,21 @@ def split_data(df):
             "test": {"X": X_test, "y": y_test}}
     return data
 
+
 # Train the model, return the model
 def train_model(data, args):
     reg_model = Ridge(**args)
     reg_model.fit(data["train"]["X"], data["train"]["y"])
     return reg_model
-    
+
+
 # Evaluate the metrics for the model
 def get_model_metrics(reg_model, data):
     preds = reg_model.predict(data["test"]["X"])
     mse = mean_squared_error(preds, data["test"]["y"])
     metrics = {"mse": mse}
     return metrics
+
 
 def main():
     # Load Data
@@ -55,4 +59,4 @@ def main():
 
     joblib.dump(value=reg, filename=model_name)
 
-
+main()
